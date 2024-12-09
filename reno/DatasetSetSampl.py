@@ -12,7 +12,7 @@ class DatasetDetSampl:
     def __init__(self, funcs, args, test=False):
         self.funcs = funcs
         self.batch_size = args.batch_size
-        self.num_batches = math.ceil(len(self.convs) / self.batch_size)
+        self.num_batches = math.ceil(len(self.funcs) / self.batch_size)
         self.feat_size = args.input_dim
         self.pos_size = args.hidden_size*2
         self.sampling = args.sampling
@@ -35,17 +35,17 @@ class DatasetDetSampl:
         for k in range(-1*self.K, self.K + 1):
             x_k = k/(2*self.K+1)
 
-            A = self.Input_Amp*np.cos(self.Input_Freq*x_k)
-            B = (1-self.Input_Amp)*np.sin(self.Input_Freq*x_k)
+            A = func.Input_Amp*np.cos(func.Input_Freq*x_k)
+            B = (1-func.Input_Amp)*np.sin(func.Input_Freq*x_k)
             inSeq.append(np.sum(A+B)/N)
 
-            A = self.Output_Amp*np.cos(self.Output_Freq*x_k)
-            B = (1-self.Output_Amp)*np.sin(self.Output_Freq*x_k)
+            A = func.Output_Amp*np.cos(func.Output_Freq*x_k)
+            B = (1-func.Output_Amp)*np.sin(func.Output_Freq*x_k)
             outSeq.append(np.sum(A+B)/N)
 
 
         features = torch.reshape(torch.tensor(inSeq).float(), (cur_len,1))
-        label_tensor = outSeq
+        label_tensor = np.array(outSeq)
         
         index = np.array(self.sampleFrames(label_tensor, func.name), dtype='int_')
 

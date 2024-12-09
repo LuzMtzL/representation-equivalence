@@ -22,13 +22,9 @@ class CNP_MLP_Mean(nn.Module):
         label_size = 1
         tag_size = 2
         self.pos_type = args.positional_encoding
-        self.atten = args.enc_atten
 
-        self.wp = args.wp
-        self.wf = args.wf
         self.device = args.device
         self.num_target = args.num_target
-        self.context_noise_std = args.context_noise_std
         
         self.pos_size = hx_dim
         if self.pos_type == "det":
@@ -68,7 +64,7 @@ class CNP_MLP_Mean(nn.Module):
         y_context = torch.zeros((batch_size, context_size)).to(self.device)
         for i in range(batch_size):
             x_hat_context[i, :, :] = x_hat_ALL[i, context_points[i, :], :]
-            y_context[i, :] = context[i, :] + self.context_noise_std*torch.randn(context_size).to(self.device)
+            y_context[i, :] = context[i, :]
         r_context = self.xyenc(x_hat_context, y_context)
         r = torch.mean(r_context, dim=1)
 

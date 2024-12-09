@@ -88,10 +88,9 @@ class Coach:
                 features = features.to(self.args.device)
                 indexes = indexes.to(self.args.device)
                 context = context.to(self.args.device)
-                speakers = speakers.to(self.args.device)
                 lens = lens.to(self.args.device)
 
-                [y_hat, y_var] = self.model(features, indexes, context, speakers, lens)
+                [y_hat, y_var] = self.model(features, indexes, context, lens)
                 
                 for pred, l, lab, i, x in zip(y_hat, lens, labels, indexes, context):
                     lengths.append(l.detach().to('cpu'))

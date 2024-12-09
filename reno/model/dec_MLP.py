@@ -18,8 +18,6 @@ class dec_MLP(nn.Module):
         self.drop3 = nn.Dropout(args.drop_rate)
         self.lin4 = nn.Linear(hidden_size, tag_size, bias=True)
 
-        self.loss_weight = args.loss_weight
-
     def get_prob(self, x_hat, r):
         batch_size, num_target, r_dim = r.size(0), x_hat.size(1), r.size(1)
         r_mat = torch.reshape(r,(batch_size,1,r_dim))
@@ -39,15 +37,12 @@ class dec_MLP(nn.Module):
 
         return y_hat, y_var
 
-    def get_loss(self, x_hat, r, label_tensor, var_tensor):
+    def get_loss(self, x_hat, r, label_tensor):
         hidden = self.get_prob(x_hat, r)
         stats = self.lin4(hidden)
         y_hat = stats[:, :, 0]
         y_var = stats[:, :, 1]
-        loss_CCC = self.concordance(torch.flatten(label_tensor), torch.flatten(y_hat))
-        # loss_var = self.variance_loss(torch.flatten(label_tensor), torch.flatten(y_hat), torch.flatten(y_var))
-        loss_var = self.concordance(torch.flatten(var_tensor), torch.flatten(y_var))
-        loss = self.loss_weight*loss_CCC + (1-self.loss_weight)*loss_var
+        loss = self.concordance(torch.flatten(label_tensor), torch.flatten(y_hat))
         return loss, y_hat, y_var
 
     def concordance(self, true_labels, predicted_values):

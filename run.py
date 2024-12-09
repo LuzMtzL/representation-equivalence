@@ -45,7 +45,7 @@ def main(args):
 
     log.debug("Building model...")
     if args.model_name == "":
-        model_name = args.model + "_" + args.sampling + "_" + str(args.min_samples)
+        model_name = args.model + "_" + str(args.K) + "_" + args.sampling + "_" + str(args.min_samples)
     else:
         model_name = args.model_name
     model_file = "./save/model_" + model_name + ".pt"
@@ -73,6 +73,8 @@ def main(args):
     opt.set_parameters(model.parameters(), args.optimizer)
 
     coach = reno.Coach(train_loader, test_loader, model, opt, args, model_file, './predictions/'+model_name)
+    if not os.path.isdir('./predictions/'+model_name):
+        os.mkdir('./predictions/'+model_name)
     if not args.from_begin:
     # if 0:
         ckpt = torch.load(model_file)
@@ -121,7 +123,7 @@ if __name__ == "__main__":
                         help="Computing device.")
     parser.add_argument("--epochs", default=1, type=int,
                         help="Number of training epochs.")
-    parser.add_argument("--batch_size", default=33, type=int,
+    parser.add_argument("--batch_size", default=50, type=int,
                         help="Batch size.")
     parser.add_argument("--optimizer", type=str, default="adam",
                         choices=["sgd", "rmsprop", "adam"],
