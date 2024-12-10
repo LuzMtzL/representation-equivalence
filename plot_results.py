@@ -1,6 +1,5 @@
 import numpy as np
 import argparse
-from scipy import special
 from tqdm import tqdm
 
 def dirichlet_kernel(x, K):
