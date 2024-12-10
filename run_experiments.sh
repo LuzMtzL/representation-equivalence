@@ -47,10 +47,10 @@
 # done
 
 # Get data for plot
-python plot_results.py --pred_fldr predictions/CNP_MLP_Mean_30_uniform_5 \
-    --train_K 30 --start_K 5 --last_K 100 --step_K 5
-python plot_results.py --pred_fldr predictions/BiLSTM_30_uniform_5 \
-    --train_K 30 --start_K 5 --last_K 100 --step_K 5
+# python plot_results.py --pred_fldr predictions/CNP_MLP_Mean_30_uniform_5 \
+#     --train_K 30 --start_K 5 --last_K 100 --step_K 5
+# python plot_results.py --pred_fldr predictions/BiLSTM_30_uniform_5 \
+#     --train_K 30 --start_K 5 --last_K 100 --step_K 5
 
 # make plot
 python make_plot.py

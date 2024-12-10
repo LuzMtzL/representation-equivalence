@@ -1,6 +1,15 @@
 import numpy as np
 import argparse
 from scipy import special
+from tqdm import tqdm
+
+def dirichlet_kernel(x, K):
+    if x == 0:
+        return 1
+    else:
+        num = np.sin(2*np.pi*(K+0.5)*x)
+        den = (2*K+1)*np.sin(np.pi*x)
+        return num/den
 
 def main(args):
     K = args.train_K
@@ -15,12 +24,13 @@ def main(args):
         for line in lines:
             tmp = []
             for val in line.strip().split():
-                tmp.append(float(val))
+                tmp.append(float(val.strip('[]')))
             uTfx.append(tmp)
     train_uTfx = {names[i]: uTfx[i] for i in range(len(names))}
 
     X = []
     Y = []
+    # for K in range(30,31):
     for K in range(args.start_K,args.last_K+1,args.step_K):
         test_fldr = args.pred_fldr.replace(str(args.train_K),str(K))
         uTfx = []
@@ -34,11 +44,11 @@ def main(args):
             for line in lines:
                 tmp = []
                 for val in line.strip().split():
-                    tmp.append(float(val))
+                    tmp.append(float(val.strip('[]')))
                 uTfx.append(tmp)
         test_uTfx = {names[i]: uTfx[i] for i in range(len(names))}
         Errors = []
-        for name in names:
+        for name in tqdm(names, desc=str(K)):
             if K < args.train_K:
                 # Convert train sequence to test resolution
                 uTfx = train_uTfx[name]
@@ -59,7 +69,7 @@ def main(args):
                 for m in range(-1*K2,K2):
                     xm = m/(2*K2+1)
                     cm = uTfx[m+K2]
-                    dm = special.diric(xk-xm,K2)
+                    dm = dirichlet_kernel(xk-xm,K2)
                     sum += cm*dm
                 TTuTfx.append(sum)
             err = np.linalg.norm(np.array(uTfx_ref)-np.array(TTuTfx))
@@ -68,7 +78,7 @@ def main(args):
         X.append(2*K+1)
         Y.append(RepresentationEquivalenceError)
         
-    with open('./results/' + args.pred_fldr.split('/')[-1] + '.txt') as f:
+    with open('./results/' + args.pred_fldr.split('/')[-1] + '.txt', 'w') as f:
         f.write('Resolution;Representation Equivalence Error\n')
         for res, err in zip(X,Y):
             f.write(f"{res};{err}\n")
