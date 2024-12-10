@@ -15,8 +15,6 @@ class BiLSTM(nn.Module):
         h_dim = args.hidden_size
         tag_size = 1
 
-        self.wp = args.wp
-        self.wf = args.wf
         self.device = args.device
 
         self.rnn_mod = lstm(u_dim, h_dim, tag_size, args)

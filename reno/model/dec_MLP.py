@@ -34,6 +34,7 @@ class dec_MLP(nn.Module):
         stats = self.lin4(hidden)
         y_hat = stats[:, :, 0]
         y_var = stats[:, :, 1]
+        y_hat = torch.nan_to_num(y_hat)
 
         return y_hat, y_var
 
@@ -42,6 +43,7 @@ class dec_MLP(nn.Module):
         stats = self.lin4(hidden)
         y_hat = stats[:, :, 0]
         y_var = stats[:, :, 1]
+        y_hat = torch.nan_to_num(y_hat)
         loss = self.concordance(torch.flatten(label_tensor), torch.flatten(y_hat))
         return loss, y_hat, y_var
 

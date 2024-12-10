@@ -25,12 +25,14 @@ class lstm(nn.Module):
     def forward(self, x):
         hidden = self.get_prob(x)
         y_hat = self.lin(hidden)
+        y_hat = torch.nan_to_num(y_hat)
 
         return y_hat
 
     def get_loss(self, x, label_tensor):
         hidden = self.get_prob(x)
         y_hat = self.lin(hidden)
+        y_hat = torch.nan_to_num(y_hat)
         loss = self.concordance(torch.flatten(label_tensor), torch.flatten(y_hat))
 
         return loss

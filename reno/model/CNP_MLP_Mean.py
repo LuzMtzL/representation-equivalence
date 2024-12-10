@@ -28,9 +28,9 @@ class CNP_MLP_Mean(nn.Module):
         
         self.pos_size = hx_dim
         if self.pos_type == "det":
-            self.pos_enc = self.getPositionEncoding(512)
+            self.pos_enc = self.getPositionEncoding(201)
         else:
-            self.pos_enc = torch.zeros((512, self.pos_size))
+            self.pos_enc = torch.zeros((201, self.pos_size))
 
         self.xenc = xenc_MLP(u_dim, hx_dim, x_dim, args)
         self.xyenc = xyenc_MLP(x_dim+label_size, r_dim, r_dim, args)

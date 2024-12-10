@@ -84,7 +84,8 @@ class Coach:
             lengths = []
             indx = []
             ctxt = []
-            for features, labels, indexes, context, lens, names in data_loader:
+            names = []
+            for features, labels, indexes, context, lens, name in data_loader:
                 features = features.to(self.args.device)
                 indexes = indexes.to(self.args.device)
                 context = context.to(self.args.device)
@@ -92,12 +93,13 @@ class Coach:
 
                 [y_hat, y_var] = self.model(features, indexes, context, lens)
                 
-                for pred, l, lab, i, x in zip(y_hat, lens, labels, indexes, context):
+                for pred, l, lab, i, x, n in zip(y_hat, lens, labels, indexes, context, name):
                     lengths.append(l.detach().to('cpu'))
                     preds.append(pred.detach().to('cpu'))
                     golds.append(lab)
                     indx.append(i.detach().to('cpu'))
                     ctxt.append(x.detach().to('cpu'))
+                    names.append(n)
 
             golds = [lab[:l] for lab, l in zip(golds, lengths)]
             preds = [pred[:l] for pred, l in zip(preds, lengths)]

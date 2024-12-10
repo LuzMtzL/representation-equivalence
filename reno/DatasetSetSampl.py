@@ -43,9 +43,10 @@ class DatasetDetSampl:
             B = (1-func.Output_Amp)*np.sin(func.Output_Freq*x_k)
             outSeq.append(np.sum(A+B)/N)
 
+        inSeq = np.nan_to_num(np.array(inSeq))
+        label_tensor = np.nan_to_num(np.array(outSeq))
 
         features = torch.reshape(torch.tensor(inSeq).float(), (cur_len,1))
-        label_tensor = np.array(outSeq)
         
         index = np.array(self.sampleFrames(label_tensor, func.name), dtype='int_')
 
@@ -62,7 +63,7 @@ class DatasetDetSampl:
             conv_num = conv_num[1]
             conv_num = int(conv_num)
             len_trace = len(label_trace)
-            if self.min_frames < len_trace-self.num_target:
+            if self.min_frames <= len_trace-self.num_target:
                 jump_len = np.floor(len_trace/self.min_frames)
                 st = conv_num % jump_len
                 for i in range(self.min_frames):
@@ -75,7 +76,7 @@ class DatasetDetSampl:
                     index.remove(st + i*jump_len)
         elif self.sampling == "uniform":
             len_trace = len(label_trace)
-            if self.min_frames < len_trace-self.num_target:
+            if self.min_frames <= len_trace-self.num_target:
                 jump_len = np.floor(len_trace/self.min_frames)
                 st = random.randint(0, jump_len-1)
                 for i in range(self.min_frames):

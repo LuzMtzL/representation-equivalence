@@ -44,16 +44,17 @@ def main(args):
     # get data sets
 
     log.debug("Building model...")
+    model_name = args.model + "_" + str(args.K) + "_" + args.sampling + "_" + str(args.min_samples)
     if args.model_name == "":
-        model_name = args.model + "_" + str(args.K) + "_" + args.sampling + "_" + str(args.min_samples)
+        model_file = "./save/model_" + model_name + ".pt"
     else:
-        model_name = args.model_name
-    model_file = "./save/model_" + model_name + ".pt"
+        model_file = "./save/model_" + args.model_name + ".pt"
+    
 
     if args.min_samples > args.max_samples:
         args.max_samples = args.min_samples  
     if args.num_target > 2*args.K+1:
-        args.num_target = 2*args.K+1
+        args.num_target = 2*args.K+1 - args.min_samples
   
     trainset = reno.DatasetDetSampl(data["train"], args, test=False)
     testset = reno.DatasetDetSampl(data["test"], args, test=True)
@@ -77,7 +78,7 @@ def main(args):
         os.mkdir('./predictions/'+model_name)
     if not args.from_begin:
     # if 0:
-        ckpt = torch.load(model_file)
+        ckpt = torch.load(model_file, weights_only=False)
         coach.load_ckpt(ckpt)
 
     # Train.
